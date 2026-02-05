@@ -18,16 +18,16 @@ def check_stocks():
     for stock_id, ticker, added_date in stocks:
         try:
             stock = yf.Ticker(ticker)
-            data = stock.history(period='1d', interval='1d')
+            data = stock.history(period='5d')
 
-            if data.empty:
+            if data.empty or len(data) < 2:
                 print(f"  {ticker}: No data available")
                 continue
 
             current_price = data['Close'].iloc[-1]
-            open_price = data['Open'].iloc[-1]
+            previous_close = data['Close'].iloc[-2]
 
-            change_percent = ((current_price - open_price) / open_price) * 100
+            change_percent = ((current_price - previous_close) / previous_close) * 100
 
             print(f"  {ticker}: ${current_price:.2f} ({change_percent:+.2f}%)")
 

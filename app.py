@@ -34,11 +34,11 @@ def index():
     for stock_id, ticker, added_date in stocks:
         try:
             stock = yf.Ticker(ticker)
-            data = stock.history(period='1d', interval='1d')
-            if not data.empty:
+            data = stock.history(period='5d')
+            if not data.empty and len(data) >= 2:
                 current_price = data['Close'].iloc[-1]
-                open_price = data['Open'].iloc[-1]
-                change_percent = ((current_price - open_price) / open_price) * 100
+                previous_close = data['Close'].iloc[-2]
+                change_percent = ((current_price - previous_close) / previous_close) * 100
                 stock_data.append({
                     'id': stock_id,
                     'ticker': ticker,
@@ -54,7 +54,8 @@ def index():
                     'change_percent': None,
                     'added_date': added_date
                 })
-        except:
+        except Exception as e:
+            print(f"Error fetching {ticker}: {e}")
             stock_data.append({
                 'id': stock_id,
                 'ticker': ticker,
@@ -92,4 +93,4 @@ def check_now():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)
