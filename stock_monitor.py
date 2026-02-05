@@ -4,7 +4,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import os
+from dotenv import load_dotenv
 from database import get_all_stocks, log_alert, was_alert_sent_today
+
+load_dotenv()
 
 def check_stocks():
     """Check all stocks for price drops."""
@@ -64,7 +67,7 @@ def send_email_alert(alerts):
         return
 
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = f"🚨 Stock Alert: {len(alerts)} stock(s) dropped >5%"
+    msg['Subject'] = f"📉 Stock Alert: {len(alerts)} stock(s) dropped >5% today"
     msg['From'] = sender_email
     msg['To'] = recipient_email
 
@@ -73,13 +76,11 @@ def send_email_alert(alerts):
         for alert in alerts
     ])
 
-    text_content = f"""Stock Price Alert
-
-The following stocks have dropped more than 5% today:
+    text_content = f"""Artemas, a friendly reminder to purchase these stocks today:
 
 {alert_list}
 
-Time to buy the dip!
+These stocks dropped more than 5% today - time to buy the dip!
 
 ---
 Stock Reminder App
@@ -88,12 +89,12 @@ Stock Reminder App
     html_content = f"""
     <html>
       <body style="font-family: Arial, sans-serif;">
-        <h2 style="color: #d32f2f;">🚨 Stock Price Alert</h2>
-        <p>The following stocks have dropped more than 5% today:</p>
+        <h2 style="color: #2c5aa0;">📉 Stock Alert</h2>
+        <p style="font-size: 16px;"><strong>Artemas, a friendly reminder to purchase these stocks today:</strong></p>
         <ul style="font-size: 16px;">
           {''.join([f'<li><strong>{alert["ticker"]}</strong>: ${alert["current_price"]:.2f} <span style="color: #d32f2f;">(DOWN {alert["drop_percentage"]:.2f}%)</span></li>' for alert in alerts])}
         </ul>
-        <p style="font-size: 18px; color: #388e3c;"><strong>Time to buy the dip!</strong></p>
+        <p style="font-size: 16px; color: #388e3c;"><strong>Time to buy the dip!</strong></p>
         <hr>
         <p style="color: #666; font-size: 12px;">Stock Reminder App</p>
       </body>

@@ -35,4 +35,4 @@ def import_stocks_from_csv(csv_file):
     return added, skipped
 
 if __name__ == '__main__':
-    import_stocks_from_csv('artemas_positions.csv')
+    import_stocks_from_csv('positions.csv')
